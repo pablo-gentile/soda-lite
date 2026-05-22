@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Planificador Renal · Familia D | Sin gluten, sin lactosa, con Gladys</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: system-ui, 'Segoe UI', 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            background: #eef5ea;
+            margin: 0;
+            padding: 16px;
+        }
+
+        .contenedor {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        /* header */
+        .cabecera {
+            background: white;
+            border-radius: 32px;
+            padding: 16px 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 1.6rem;
+            color: #2a5c2a;
+        }
+
+        .badges {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            font-size: 0.75rem;
+        }
+
+        .badge {
+            background: #e6f0e3;
+            padding: 4px 12px;
+            border-radius: 40px;
+        }
+
+        /* controles */
+        .barra-controles {
+            background: white;
+            border-radius: 28px;
+            padding: 12px 20px;
+            margin-bottom: 28px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .grupo-comensales {
+            background: #f0f8ed;
+            padding: 6px 16px;
+            border-radius: 60px;
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .grupo-comensales input {
+            width: 75px;
+            padding: 8px;
+            border-radius: 30px;
+            border: 1px solid #bdd4bd;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .botones-vista {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-vista {
+            background: #e2e8e2;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-vista.activo {
+            background: #2a6b2a;
+            color: white;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* cards semana / día */
+        .grid-dias {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card-dia {
+            background: white;
+            border-radius: 28px;
+            padding: 18px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+            border: 1px solid #ddecdd;
+        }
+
+        .titulo-dia {
+            font-size: 1.4rem;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #d4e6d4;
+            padding-bottom: 8px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .badge-gladys {
+            background: #fae67a;
+            font-size: 0.7rem;
+            padding: 4px 12px;
+            border-radius: 50px;
+        }
+
+        .adelanto-gladys {
+            background: #fffde7;
+            border-left: 4px solid #f5c842;
+            border-radius: 14px;
+            padding: 8px 12px;
+            margin-top: 8px;
+            font-size: 0.72rem;
+            color: #7a5c00;
+        }
+
+        .usa-adelanto {
+            background: #e8f5e9;
+            border-left: 4px solid #66bb6a;
+            border-radius: 14px;
+            padding: 8px 12px;
+            margin-bottom: 8px;
+            font-size: 0.72rem;
+            color: #2e6b30;
+        }
+
+        .plato {
+            background: #fffbf0;
+            border-left: 5px solid #7faa6b;
+            border-radius: 20px;
+            padding: 12px;
+            margin-bottom: 16px;
+        }
+
+        .plato-tipo {
+            font-weight: bold;
+            font-size: 0.8rem;
+            color: #6d4c2c;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .plato-nombre {
+            font-weight: 800;
+            font-size: 1rem;
+            margin: 8px 0 6px;
+            color: #2a5c2a;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        .plato-nombre:hover {
+            text-decoration: underline;
+        }
+
+        .ingredientes-linea {
+            font-size: 0.7rem;
+            background: #fff2df;
+            padding: 8px;
+            border-radius: 16px;
+            margin-top: 6px;
+            color: #2d2b20;
+        }
+
+        .tiempo-plato {
+            font-size: 0.7rem;
+            background: #e2e8e0;
+            display: inline-block;
+            padding: 2px 12px;
+            border-radius: 30px;
+            margin: 8px 0 6px;
+        }
+
+        .acciones {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background: #e0ebdd;
+            border: none;
+            padding: 5px 14px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+
+        button.danger {
+            background: #ffe0dd;
+            color: #b13b2a;
+        }
+
+        button.ver-receta {
+            background: #6a8e5e;
+            color: white;
+        }
+
+        .selector-plato {
+            margin-top: 14px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .selector-plato select {
+            flex: 1;
+            padding: 6px;
+            border-radius: 30px;
+            border: 1px solid #ccc;
+        }
+
+        .lista-compra {
+            background: #eef3ea;
+            border-radius: 32px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        .lista-compra ul {
+            columns: 2;
+            column-gap: 30px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-contenido {
+            background: white;
+            margin: 8% auto;
+            padding: 24px;
+            border-radius: 32px;
+            width: 90%;
+            max-width: 560px;
+            max-height: 80%;
+            overflow-y: auto;
+        }
+
+        .cerrar-modal {
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        hr {
+            margin: 20px 0;
+        }
+
+        footer {
+            font-size: 0.7rem;
+            text-align: center;
+            margin-top: 30px;
+            color: #476244;
+        }
+
+        @media (max-width: 720px) {
+            .lista-compra ul {
+                columns: 1;
+            }
+            .grid-dias {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="contenedor">
+    <div class="cabecera">
+        <div>
+            <h1>🍽️ Planificador Familiar D</h1>
+            <div class="badges">
+                <span class="badge">🚰 Renal (creatinina 3.4)</span>
+                <span class="badge">🚫 Sin gluten / Sin lactosa</span>
+                <span class="badge">⭐ Gladys (mar, jue, vie)</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="barra-controles">
+        <div class="grupo-comensales">
+            <span>👥 Comensales:</span>
+            <input type="number" id="cantidadComensales" value="4" min="1" max="12" step="1">
+            <button id="btnRefrescar">⟳ Actualizar cantidades</button>
+        </div>
+        <div class="botones-vista">
+            <button class="btn-vista" data-vista="dia">📆 HOY</button>
+            <button class="btn-vista activo" data-vista="semana">📅 SEMANA</button>
+            <button class="btn-vista" data-vista="mes">🗓️ MES (4 semanas)</button>
+        </div>
+    </div>
+
+    <div id="contenedorVistas"></div>
+    <div id="zonaListaCompra" class="lista-compra"></div>
+    <footer>💡 Cliqué en el nombre del plato → receta completa con cantidades exactas para los comensales actuales.<br>
+    🧑‍🍳 Gladys puede cocinar los martes, jueves y viernes – ideal para dejar comidas preparadas.<br>
+    ⭐ Los fines de semana ya incluimos platos "muletos" rápidos.</footer>
+</div>
+
+<div id="modalReceta" class="modal">
+    <div class="modal-contenido">
+        <span class="cerrar-modal">&times;</span>
+        <h2 id="modalTitulo"></h2>
+        <div id="modalCuerpo"></div>
+    </div>
+</div>
+
+<script>
+    // ---------- BASE DE DATOS (recetas base para 4 personas) ----------
+    // gladysAdelanta: preparación que Gladys deja lista ese día para usar después
+    // usaAdelanto: descripción de qué adelanto usa este plato (y de qué día)
+    const RECETAS = [
+        {
+            id: "p1",
+            nombre: "Milanesas de pollo en air fryer con ensalada mixta",
+            tipo: "ALMUERZO", minutos: 20, renalAmigable: true,
+            ingredientesBase: { "pechuga de pollo (fileteada)": "700g", "pan rallado sin gluten": "200g", "huevos": "2", "ajo en polvo": "1 cdita", "aceite en spray": "al gusto", "lechuga": "1", "tomate": "2", "zanahoria rallada": "1" },
+            preparacion: "1. Pasar los filetes por huevo batido y pan rallado con ajo.\n2. Rociar con spray de aceite.\n3. Air fryer 180°C por 12-14 min, dando vuelta a mitad.\n4. Servir con ensalada fresca.",
+            usaAdelanto: null,
+            gladysAdelanta: "Deja filetes de pollo ya empanados (sin freír) en la heladera para el miércoles."
+        },
+        {
+            id: "p2",
+            nombre: "Merluza a la plancha con arroz y zapallitos salteados",
+            tipo: "ALMUERZO", minutos: 20, renalAmigable: true,
+            ingredientesBase: { "filete de merluza": "700g", "arroz blanco": "1.5 tazas", "zapallito": "3", "ajo": "2 dientes", "limón": "1", "aceite": "3 cdas" },
+            preparacion: "1. Cocinar arroz (doble de agua, 15 min).\n2. Saltear zapallitos en rodajas con ajo.\n3. Cocinar merluza en plancha o sartén 3-4 min por lado con unas gotas de limón.",
+            usaAdelanto: null,
+            gladysAdelanta: "Deja arroz cocido extra en tupper para usar el jueves y viernes."
+        },
+        {
+            id: "p3",
+            nombre: "Guiso de lentejas casero con arroz (moderado)",
+            tipo: "ALMUERZO", minutos: 15, renalAmigable: false,
+            ingredientesBase: { "lentejas secas": "300g", "cebolla": "1", "morrón rojo": "1", "tomate perita": "2", "laurel": "2 hojas", "arroz cocido (de Gladys)": "2 tazas" },
+            preparacion: "1. Usar el guiso de lentejas que dejó Gladys (ya cocido).\n2. Calentar en olla con un chorrito de agua si es necesario.\n3. Servir con arroz cocido del tupper de Gladys.",
+            usaAdelanto: "Gladys dejó el guiso de lentejas cocido el martes. Solo calentar.",
+            gladysAdelanta: null
+        },
+        {
+            id: "p4",
+            nombre: "Milanesas de pollo (empanadas por Gladys) + puré rápido",
+            tipo: "ALMUERZO", minutos: 15, renalAmigable: true,
+            ingredientesBase: { "milanesas de pollo (de Gladys)": "8 unidades", "papas": "800g", "aceite de oliva": "3 cdas", "sal (poca)": "1 pizca" },
+            preparacion: "1. Sacar las milanesas que dejó Gladys de la heladera.\n2. Cocinar en air fryer 180°C, 12-14 min.\n3. Mientras tanto, hervir papas, pisar con aceite de oliva y poca sal.",
+            usaAdelanto: "Gladys empanó el pollo el martes — solo va a la air fryer.",
+            gladysAdelanta: null
+        },
+        {
+            id: "p5",
+            nombre: "Huevos revueltos con espinaca y tostadas sin gluten",
+            tipo: "CENA", minutos: 12, renalAmigable: true,
+            ingredientesBase: { "huevos": "8", "espinaca fresca": "300g", "ajo": "1 diente", "pan sin gluten": "8 rebanadas", "aceite": "2 cdas" },
+            preparacion: "1. Saltear espinaca con ajo 2 min.\n2. Agregar huevos batidos y revolver suavemente.\n3. Tostar el pan. Servir junto.",
+            usaAdelanto: null,
+            gladysAdelanta: null
+        },
+        {
+            id: "p6",
+            nombre: "Fideos de arroz con pollo desmenuzado y verduras",
+            tipo: "CENA", minutos: 12, renalAmigable: true,
+            ingredientesBase: { "fideos de arroz": "300g", "pollo cocido desmenuzado (de Gladys)": "300g", "zapallito": "2", "zanahoria": "1", "salsa soja sin gluten": "3 cdas", "aceite": "2 cdas" },
+            preparacion: "1. Hidratar fideos en agua caliente 5 min.\n2. Saltear verduras 3 min.\n3. Agregar pollo desmenuzado del tupper y fideos. Condimentar con salsa soja.",
+            usaAdelanto: "Gladys dejó pollo cocido y desmenuzado el jueves — solo saltear.",
+            gladysAdelanta: null
+        },
+        {
+            id: "p7",
+            nombre: "Sopa crema de calabaza (hecha por Gladys)",
+            tipo: "CENA", minutos: 5, renalAmigable: true,
+            ingredientesBase: { "crema de calabaza (de Gladys)": "1.5 L", "cebolla verdeo": "1 (para decorar)", "aceite de oliva": "1 cda" },
+            preparacion: "1. Calentar la crema de calabaza que dejó Gladys.\n2. Servir con un hilo de aceite de oliva y cebolla verdeo picada.",
+            usaAdelanto: "Gladys preparó la crema de calabaza el jueves. Solo calentar (5 min).",
+            gladysAdelanta: "Deja pollo cocido y desmenuzado para usar el viernes en la cena de fideos."
+        },
+        {
+            id: "p8",
+            nombre: "Tortilla de papa en sartén con ensalada",
+            tipo: "CENA", minutos: 25, renalAmigable: false,
+            ingredientesBase: { "papas": "6 medianas", "huevos": "6", "aceite": "4 cdas", "lechuga": "1", "tomate": "3", "zanahoria": "1" },
+            preparacion: "1. Hervir o cocinar papas en rodajas en air fryer (180°C, 15 min).\n2. Mezclar con huevo batido y sal.\n3. Cocinar en sartén tapada a fuego medio 8 min, dar vuelta con plato.\n4. Servir con ensalada.",
+            usaAdelanto: null,
+            gladysAdelanta: null
+        },
+        {
+            id: "p9",
+            nombre: "Muslos de pollo en air fryer con batatas asadas",
+            tipo: "ALMUERZO", minutos: 30, renalAmigable: true,
+            ingredientesBase: { "muslos de pollo": "8", "batatas": "4 medianas", "romero": "1 cdita", "pimentón dulce": "1 cdita", "ajo en polvo": "1 cdita", "aceite": "3 cdas" },
+            preparacion: "1. Condimentar muslos con romero, pimentón y ajo.\n2. Air fryer 200°C por 25 min (dando vuelta a mitad).\n3. Batatas en cubos en air fryer 20 min a 200°C (pueden ir juntas si tiene espacio).",
+            usaAdelanto: null,
+            gladysAdelanta: "Prepara crema de calabaza para la cena del viernes."
+        },
+        {
+            id: "p10",
+            nombre: "⭐ MULETO: Arroz salteado con huevo y vegetales",
+            tipo: "CENA", minutos: 10, renalAmigable: true,
+            ingredientesBase: { "arroz cocido": "4 tazas", "huevos": "4", "vegetales congelados mix": "400g", "aceite": "2 cdas", "sal (poca)": "1 pizca" },
+            preparacion: "1. Saltear vegetales 3 min en sartén.\n2. Agregar huevos batidos, revolver.\n3. Mezclar con arroz cocido. Listo.",
+            usaAdelanto: "Usar arroz cocido del tupper que dejó Gladys el martes.",
+            gladysAdelanta: null
+        },
+        {
+            id: "p11",
+            nombre: "⭐ MULETO: Fideos de arroz con atún, aceitunas y tomate",
+            tipo: "CENA", minutos: 10, renalAmigable: true,
+            ingredientesBase: { "fideos de arroz": "300g", "atún al natural": "300g escurrido", "aceitunas verdes": "150g", "tomate": "2", "aceite de oliva": "2 cdas" },
+            preparacion: "1. Hidratar fideos en agua caliente 5 min.\n2. Escurrir y mezclar con atún, aceitunas y tomate en cubos.\n3. Condimentar con aceite de oliva.",
+            usaAdelanto: null,
+            gladysAdelanta: null
+        },
+        {
+            id: "p12",
+            nombre: "Zapallitos rellenos con arroz y pollo (Gladys los hace)",
+            tipo: "ALMUERZO", minutos: 10, renalAmigable: true,
+            ingredientesBase: { "zapallitos rellenos (de Gladys)": "8 unidades", "arroz cocido (de Gladys)": "2 tazas" },
+            preparacion: "1. Calentar los zapallitos rellenos que preparó Gladys (horno 10 min o microondas).\n2. Servir con arroz del tupper.",
+            usaAdelanto: "Gladys preparó los zapallitos rellenos el viernes. Solo calentar.",
+            gladysAdelanta: "Prepara zapallitos rellenos con arroz y pollo para el domingo."
+        }
+    ];
+
+    // Plan por defecto (lunes a domingo)
+    // Lógica: Gladys viene mar/jue/vie → adelanta para mié, vie/sáb, sáb/dom
+    let planSemanal = [
+        { dia: "Lunes",     almuerzoId: "p1",  cenaId: "p5"  },   // vos: milanesas air fryer (fácil) / revuelto
+        { dia: "Martes",    almuerzoId: "p2",  cenaId: "p8"  },   // Gladys: merluza + adelanta arroz y pollo empanado
+        { dia: "Miércoles", almuerzoId: "p4",  cenaId: "p10" },   // vos: milanesas de Gladys air fryer / muleto arroz
+        { dia: "Jueves",    almuerzoId: "p3",  cenaId: "p7"  },   // Gladys: guiso lentejas (usan arroz de martes) / crema calabaza + adelanta pollo
+        { dia: "Viernes",   almuerzoId: "p9",  cenaId: "p6"  },   // Gladys: pollo air fryer / fideos con pollo desmenuzado (de jueves)
+        { dia: "Sábado",    almuerzoId: "p12", cenaId: "p11" },   // vos: zapallitos de Gladys / muleto fideos atún
+        { dia: "Domingo",   almuerzoId: "p1",  cenaId: "p5"  }    // vos: milanesas air fryer / revuelto
+    ];
+
+    const DIAS_GLADYS = ["Martes", "Jueves", "Viernes"];
+    let vistaActual = "semana"; // 'dia', 'semana', 'mes'
+    let comensalesActuales = 4;
+
+    // helpers
+    function obtenerReceta(id) {
+        return RECETAS.find(r => r.id === id);
+    }
+
+    // Escalar ingredientes para N comensales (base 4)
+    function escalarIngredientes(ingBase, comensales) {
+        const factor = comensales / 4;
+        const escalado = {};
+        for (let [ing, cant] of Object.entries(ingBase)) {
+            let valorNum = parseFloat(cant);
+            if (isNaN(valorNum)) {
+                escalado[ing] = cant;
+            } else {
+                let unidad = cant.replace(/[\d\.]+/, '');
+                let nuevo = (valorNum * factor).toFixed(1);
+                escalado[ing] = nuevo + unidad;
+            }
+        }
+        return escalado;
+    }
+
+    function textoIngredientes(ingredientesEscalados) {
+        return Object.entries(ingredientesEscalados).map(([k, v]) => `${k}: ${v}`).join(", ");
+    }
+
+    // mostrar receta en modal (con cantidades escaladas)
+    function mostrarReceta(recetaId) {
+        const receta = obtenerReceta(recetaId);
+        if (!receta) return;
+        const ingredientesEscalados = escalarIngredientes(receta.ingredientesBase, comensalesActuales);
+        const txtIngredientes = textoIngredientes(ingredientesEscalados);
+        document.getElementById("modalTitulo").innerHTML = `📘 ${receta.nombre} · ${receta.minutos} min · para ${comensalesActuales} personas`;
+        document.getElementById("modalCuerpo").innerHTML = `
+            <strong>🥗 Ingredientes (${comensalesActuales} pers):</strong><br>${txtIngredientes}<br><br>
+            <strong>👩‍🍳 Preparación:</strong><br>${receta.preparacion.replace(/\n/g, '<br>')}<br><br>
+            ${!receta.renalAmigable ? '<span style="background:#ffe0e0; padding:4px 12px; border-radius:20px;">⚠️ Moderado en legumbres o papa (controlar porción)</span>' : '✅ Apto para dieta renal (sin excesos de potasio/fósforo)'}
+        `;
+        document.getElementById("modalReceta").style.display = "block";
+    }
+
+    function renderPlato(tipo, receta, idReceta, indexDia, tipoComida) {
+        if (!receta) return `<div class="plato">⚠️ Plato no existe</div>`;
+        const ingredEsc = escalarIngredientes(receta.ingredientesBase, comensalesActuales);
+        const txtIngred = textoIngredientes(ingredEsc);
+        const usaAdelantoHtml = receta.usaAdelanto
+            ? `<div class="usa-adelanto">✅ ${receta.usaAdelanto}</div>` : '';
+        const gladysAdelantoHtml = receta.gladysAdelanta
+            ? `<div class="adelanto-gladys">👩‍🍳 Gladys adelanta: ${receta.gladysAdelanta}</div>` : '';
+        return `
+            <div class="plato">
+                <div class="plato-tipo"><span>🍽️ ${tipo}</span><span>⏱️ ${receta.minutos} min</span></div>
+                ${usaAdelantoHtml}
+                <div class="plato-nombre" onclick="mostrarReceta('${idReceta}')">📖 ${receta.nombre}</div>
+                <div class="ingredientes-linea">🛒 ${txtIngred}</div>
+                <div class="tiempo-plato">🕒 Comenzar ${receta.minutos} min antes</div>
+                ${gladysAdelantoHtml}
+                <div class="acciones">
+                    <button onclick="cambiarPlatoManual(${indexDia}, '${tipoComida}')">🔄 Cambiar</button>
+                    <button class="danger" onclick="eliminarPlato(${indexDia}, '${tipoComida}')">🗑️ Vaciar</button>
+                    <button class="ver-receta" onclick="mostrarReceta('${idReceta}')">📄 Ver receta</button>
+                </div>
+            </div>
+        `;
+    }
+
+    function renderSemana() {
+        let html = `<div class="grid-dias">`;
+        for (let i = 0; i < planSemanal.length; i++) {
+            const dia = planSemanal[i];
+            const almuerzo = obtenerReceta(dia.almuerzoId);
+            const cena = obtenerReceta(dia.cenaId);
+            const tieneGladys = DIAS_GLADYS.includes(dia.dia);
+            html += `
+                <div class="card-dia">
+                    <div class="titulo-dia">
+                        ${dia.dia}
+                        ${tieneGladys ? '<span class="badge-gladys">👩‍🍳 Gladys cocina</span>' : ''}
+                    </div>
+                    ${renderPlato("Almuerzo", almuerzo, dia.almuerzoId, i, "almuerzo")}
+                    ${renderPlato("Cena", cena, dia.cenaId, i, "cena")}
+                    <div class="selector-plato">
+                        <select id="tipoSelect_${i}">
+                            <option value="almuerzo">Almuerzo</option>
+                            <option value="cena">Cena</option>
+                        </select>
+                        <select id="platoSelect_${i}">
+                            ${RECETAS.map(p => `<option value="${p.id}">${p.nombre} (${p.minutos}min)</option>`).join('')}
+                        </select>
+                        <button onclick="reemplazarPlato(${i})">➕ Reemplazar</button>
+                    </div>
+                </div>
+            `;
+        }
+        html += `</div>`;
+        return html;
+    }
+
+    function renderDia() {
+        const hoy = new Date();
+        let idxDiaSemana = hoy.getDay(); // 0 domingo
+        idxDiaSemana = idxDiaSemana === 0 ? 6 : idxDiaSemana - 1;
+        const diaObj = planSemanal[idxDiaSemana];
+        if (!diaObj) return `<p>Error</p>`;
+        const almuerzo = obtenerReceta(diaObj.almuerzoId);
+        const cena = obtenerReceta(diaObj.cenaId);
+        const tieneGladys = DIAS_GLADYS.includes(diaObj.dia);
+        return `
+            <div style="background:white; border-radius:28px; padding:20px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
+                    <h2>📌 Hoy: ${diaObj.dia} - ${hoy.toLocaleDateString()}</h2>
+                    ${tieneGladys ? '<span class="badge-gladys">👩‍🍳 Gladys hoy puede cocinar</span>' : ''}
+                </div>
+                ${renderPlato("Almuerzo", almuerzo, diaObj.almuerzoId, idxDiaSemana, "almuerzo")}
+                ${renderPlato("Cena", cena, diaObj.cenaId, idxDiaSemana, "cena")}
+                <div style="margin-top:20px; text-align:center;">
+                    <button onclick="cambiarVista('semana')">← Ver semana completa</button>
+                </div>
+            </div>
+        `;
+    }
+
+    function renderMes() {
+        let html = `<div class="alert-info" style="background:#E6F0E3; padding:12px; border-radius:24px; margin-bottom:20px;">📅 Vista de 4 semanas (se repite la misma estructura, puedes editar semana a semana desde vista SEMANA)</div>`;
+        for (let semana = 1; semana <= 4; semana++) {
+            html += `<h3 style="margin:24px 0 8px 0;">📆 Semana ${semana}</h3><div class="grid-dias">`;
+            for (let i = 0; i < planSemanal.length; i++) {
+                const dia = planSemanal[i];
+                const almuerzo = obtenerReceta(dia.almuerzoId);
+                const cena = obtenerReceta(dia.cenaId);
+                const tieneGladys = DIAS_GLADYS.includes(dia.dia);
+                html += `
+                    <div class="card-dia" style="background:#fcfaf5;">
+                        <div class="titulo-dia">${dia.dia} ${tieneGladys ? '👩‍🍳' : ''}</div>
+                        <div><strong>🍽️ Alm:</strong> ${almuerzo?.nombre || '?'}</div>
+                        <div><strong>🌙 Cena:</strong> ${cena?.nombre || '?'}</div>
+                        <div class="tiempo-plato">⏱️ ${almuerzo?.minutos || 0} min / ${cena?.minutos || 0} min</div>
+                    </div>
+                `;
+            }
+            html += `</div><hr>`;
+        }
+        html += `<div style="text-align:center;"><button onclick="cambiarVista('semana')">← Editar semana actual</button></div>`;
+        return html;
+    }
+
+    function generarListaCompra() {
+        const mapaCompras = new Map();
+        let diasAConsiderar = [];
+        let tituloLista = "";
+
+        if (vistaActual === "dia") {
+            const hoy = new Date();
+            let idx = hoy.getDay();
+            idx = idx === 0 ? 6 : idx - 1;
+            diasAConsiderar = [planSemanal[idx]];
+            tituloLista = `Lista de compra de hoy (${planSemanal[idx].dia})`;
+        } else if (vistaActual === "semana") {
+            diasAConsiderar = planSemanal;
+            tituloLista = "Lista de compra semanal";
+        } else {
+            diasAConsiderar = [...planSemanal, ...planSemanal, ...planSemanal, ...planSemanal];
+            tituloLista = "Lista de compra mensual (4 semanas)";
+        }
+
+        for (const dia of diasAConsiderar) {
+            const alm = obtenerReceta(dia.almuerzoId);
+            const cena = obtenerReceta(dia.cenaId);
+            if (alm) agregarIngredientesAlMapa(alm, mapaCompras);
+            if (cena) agregarIngredientesAlMapa(cena, mapaCompras);
+        }
+        let listaHtml = `<h2>🛒 ${tituloLista} · para ${comensalesActuales} personas</h2><ul>`;
+        if (mapaCompras.size === 0) listaHtml += `<li>No hay ingredientes</li>`;
+        for (let [ingrediente, cantidad] of mapaCompras.entries()) {
+            listaHtml += `<li>✓ ${ingrediente}: ${cantidad}</li>`;
+        }
+        listaHtml += `</ul><div style="background:#fff1cf; padding:10px; border-radius:20px; margin-top:12px;">
+        🧑‍⚕️ <strong>Consejos renales:</strong> Prefiere pollo, pescado, claras de huevo. Limita lentejas y papa. Sin caldos concentrados.<br>
+        🚫 Para Marce: todas las recetas son sin gluten y sin lactosa.
+        </div>`;
+        document.getElementById("zonaListaCompra").innerHTML = listaHtml;
+    }
+
+    function agregarIngredientesAlMapa(receta, mapa) {
+        const ingredEscalados = escalarIngredientes(receta.ingredientesBase, comensalesActuales);
+        for (let [ing, cant] of Object.entries(ingredEscalados)) {
+            let prev = mapa.get(ing) || "0";
+            let prevNum = parseFloat(prev);
+            let cantNum = parseFloat(cant);
+            if (!isNaN(prevNum) && !isNaN(cantNum)) {
+                let suma = (prevNum + cantNum).toFixed(1);
+                let unidad = cant.replace(/[\d\.]+/, '');
+                mapa.set(ing, suma + unidad);
+            } else {
+                mapa.set(ing, `${prev} + ${cant}`);
+            }
+        }
+    }
+
+    // funciones globales para los botones
+    window.cambiarPlatoManual = function(indexDia, tipoComida) {
+        const nuevoId = prompt("ID del nuevo plato: p1 a p12\np1 pollo | p2 merluza | p3 lentejas | p4 milanesa lentejas | p5 revuelto | p6 fideos arroz | p7 sopa calabaza | p8 tortilla | p9 pollo batata | p10 arroz huevo | p11 fideos atun | p12 zapallitos");
+        if (nuevoId && obtenerReceta(nuevoId)) {
+            if (tipoComida === "almuerzo") planSemanal[indexDia].almuerzoId = nuevoId;
+            else planSemanal[indexDia].cenaId = nuevoId;
+            guardarPlanEnLocal();
+            actualizarVistaCompleta();
+        } else if (nuevoId) alert("ID inválido");
+    };
+
+    window.eliminarPlato = function(indexDia, tipoComida) {
+        if (confirm("Reemplazar con plato muletos (arroz con huevo o fideos atún)")) {
+            if (tipoComida === "almuerzo") planSemanal[indexDia].almuerzoId = "p10";
+            else planSemanal[indexDia].cenaId = "p11";
+            guardarPlanEnLocal();
+            actualizarVistaCompleta();
+        }
+    };
+
+    window.reemplazarPlato = function(indexDia) {
+        const tipoSelect = document.getElementById(`tipoSelect_${indexDia}`).value;
+        const platoId = document.getElementById(`platoSelect_${indexDia}`).value;
+        if (tipoSelect === "almuerzo") planSemanal[indexDia].almuerzoId = platoId;
+        else planSemanal[indexDia].cenaId = platoId;
+        guardarPlanEnLocal();
+        actualizarVistaCompleta();
+    };
+
+    window.cambiarVista = function(vista) {
+        vistaActual = vista;
+        document.querySelectorAll('.btn-vista').forEach(btn => {
+            if (btn.dataset.vista === vista) btn.classList.add('activo');
+            else btn.classList.remove('activo');
+        });
+        actualizarVistaCompleta();
+    };
+
+    function guardarPlanEnLocal() {
+        localStorage.setItem("planFamiliarD", JSON.stringify(planSemanal));
+    }
+
+    function cargarPlanLocal() {
+        const guardado = localStorage.getItem("planFamiliarD");
+        if (guardado) planSemanal = JSON.parse(guardado);
+    }
+
+    function actualizarVistaCompleta() {
+        const contenedor = document.getElementById("contenedorVistas");
+        if (vistaActual === "semana") contenedor.innerHTML = renderSemana();
+        else if (vistaActual === "dia") contenedor.innerHTML = renderDia();
+        else contenedor.innerHTML = renderMes();
+        generarListaCompra();
+    }
+
+    function actualizarComensalesYRender() {
+        const inputCom = document.getElementById("cantidadComensales");
+        comensalesActuales = parseInt(inputCom.value) || 4;
+        actualizarVistaCompleta();
+    }
+
+    // Eventos
+    document.getElementById("btnRefrescar").addEventListener("click", () => actualizarComensalesYRender());
+    document.getElementById("cantidadComensales").addEventListener("change", () => actualizarComensalesYRender());
+
+    // Botones de vista (HOY / SEMANA / MES)
+    document.querySelectorAll('.btn-vista').forEach(btn => {
+        btn.addEventListener('click', () => cambiarVista(btn.dataset.vista));
+    });
+
+    // modal close
+    document.querySelector(".cerrar-modal").onclick = () => document.getElementById("modalReceta").style.display = "none";
+    window.onclick = (e) => { if (e.target === document.getElementById("modalReceta")) document.getElementById("modalReceta").style.display = "none"; };
+
+    // Inicialización
+    cargarPlanLocal();
+    actualizarComensalesYRender();
+</script>
+</body>
+</html>
